@@ -17,8 +17,8 @@ function Evolve.new(args)
     -- the crossover function (takes two parents and returns two children) -- also has crossover rate
     self.crossover      = args.crossover
 
-    -- function for mapping onto a chromosomal representation (takes raw population member, )
-    self.chromosome     = args.chromosome
+    -- -- function for mapping onto a chromosomal representation (takes raw population member, )
+    -- self.chromosome     = args.chromosome
 
     -- procedure for selecting from the population (a function that takes a fitness function as argument)
     self.selection      = args.selection
