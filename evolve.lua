@@ -63,7 +63,7 @@ function Evolve:calc_fitness(pop, best)
     return fitness_vals, elite
 end
 
-function Evolve:start(initial_population, termination_conditions)
+function Evolve:run(initial_population, termination_conditions)
     local maxtime = termination_conditions.maxtime
     local maxiter = termination_conditions.maxiter
     local minintv = termination_conditions.minintv
