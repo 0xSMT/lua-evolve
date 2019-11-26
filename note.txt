@@ -1,0 +1,69 @@
+NOTE about chromosome evaluation
+
+The fitness evaluation will be equiavalent if yuo rotate the problem by 90 degrees or even flip it. It has rotational and lateral symmetry.
+Represent the grid as a set of lines. So:
+
+A B C D 
+E F G _
+H I J K
+
+and equivalently:
+
+A B C D * E F G * H I J K
+
+Crossover and mutation becomes similar to that one paper with multiple routes, the one in test 2 (Tavares, "On the Influence of GVR in Vehicle Routing")
+
+Crossover should take subpieces and rearrange them (consider an asexual approach?)
+Mutation should rearrange within existing rows perhaps
+
+My only concern is how to handle potential cases like these:
+
+A B C D E
+F _ _ _ G
+H I J K _
+
+How would internal gaps be modeled? 
+
+NOTE: Maybe assume that an M x N grid is full, and we must only rearrange the elements. In other words, _ does not exist.
+
+OR: Assumer you have this:
+
+A B C
+
+but the follwing is optimal (even though tehcnically you could just do C A B equivalently here):
+
+A B
+C _
+
+might need a _ unit. Perhaps _ units can be injected as vertices in the graphs, with 0 weighted edges to all other vertices. When computing 
+fitness values, it will skip over _ entires knowing they have no impact on overall fitness. 
+
+Since the chromosome size can change (much like tavares paper) these units can be inserted as a byproduct of that process. Can 'clean' chromosomes
+during evolution for uneeded _ units, such as here:
+
+A B C
+D E _ _
+F
+
+will become:
+
+A B C
+D E _ 
+F _ _
+
+_ in second row was removed, and two in third row were added to make a valid M x N grid.
+
+M is defined by the length of the longest with a non-_ concluding entry.
+N is defined by the number of rows containing more than 0 non-_ entries.
+
+The minimum necessary _ should be maintained. In other words:
+
+A _ _ B
+C _ _ D
+
+should become:
+
+A B 
+C D
+
+instead. Contiguous rows/columns of _ spanning entire matrix should be deleted.   
