@@ -15,9 +15,9 @@ function Util.copy(table)
     return dup
 end
 
-function Util.sort(table, sorter)
-    local dup = Util.copy(table)
-
+function Util.sort(t, sorter)
+    local dup = Util.copy(t)
+    
     table.sort(dup, sorter)
 
     return dup
@@ -72,6 +72,22 @@ end
 
 function Util.getall(vals, key)
     return Util.foreach(vals, function(v) return v[key] end)
+end
+
+function Util.shuffle(vals)
+    local mixed = {}
+
+    for i = 1, #vals do
+        local rand_index = math.random(i)
+        
+        if rand_index ~= i then
+            mixed[i] = mixed[rand_index]     
+        end
+
+        mixed[rand_index] = vals[i]
+    end
+
+    return mixed
 end
 
 return Util

@@ -67,3 +67,25 @@ A B
 C D
 
 instead. Contiguous rows/columns of _ spanning entire matrix should be deleted.   
+
+FORMAT OF A POPULATION MEMBER:
+
+{
+    fitness: NUMBER,
+    chromosome: {
+        data: {...},
+        rows: NUMBER,
+        cols: NUMBER,
+        graph: {
+            pts: {...},
+            edges: {
+                {
+                    pt1: ...,
+                    pt2: ...,
+                    weight: NUMBER
+                }, 
+                ....
+            }
+        }
+    }
+}

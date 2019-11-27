@@ -49,7 +49,7 @@ local order1 = function(chromosome_init)
         child1 = chromosome_init(child1)
         child2 = chromosome_init(child2)
 
-        return child1, child2
+        return {child1, child2}
     end
 end
 

@@ -20,7 +20,7 @@ function Evolve.new(args)
     self.crossover      = args.crossover
 
     -- -- function for mapping onto a chromosomal representation (takes raw population member, )
-    -- self.chromosome     = args.chromosome
+    self.chromosome     = args.chromosome
 
     -- procedure for selecting from the population (a function that takes a fitness function as argument)
     self.selection      = args.selection
@@ -43,13 +43,13 @@ end
 -- calculate the fitness
 function Evolve:calc_fitness(pop, best)
     local elite = {
-        [fitness]       = best,
-        [chromosome]    = nil
+        fitness       = best.fitness,
+        chromosome    = best.chromosome
     }
 
     for i, v in ipairs(pop) do
         if pop[i].fitness == nil then
-            pop[i].fitness = self.fit(v)
+            pop[i].fitness = self:fit(v.chromosome)
         end
 
         if self.minimize then
@@ -77,26 +77,53 @@ function Evolve:run(initial_population, termination_conditions)
     local popsize       = #population
 
     local elite = {
-        [fitness]       = self.minimize and math.huge or -math.huge,
-        [chromosome]    = nil
+        fitness       = self.minimize and math.huge or -math.huge,
+        chromosome    = nil
     }
 
     local stime = os.time()
 
+    local iterations = 1
+
     -- repeat for at most maxiter generations
     for iter = 1, maxiter do
+        iterations = iter
+        
         -- calculate fitness related values
-        local elite = self.calc_fitness(population, elite.fitness)
+        elite = self:calc_fitness(population, elite)
+
+        -- function dump(o)
+        --     if type(o) == 'table' then
+        --        local s = '{ '
+        --        for k,v in pairs(o) do
+        --           if type(k) ~= 'number' then k = '"'..k..'"' end
+        --           s = s .. '['..k..'] = ' .. dump(v) .. ','
+        --        end
+        --        return s .. '} '
+        --     else
+        --        return tostring(o)
+        --     end
+        --  end
+
+        -- -- for k, v in pairs(population) do
+        -- --     print(dump(v))
+        -- -- end
+
         local range = Util.range(population, "fitness")
 
         -- check if the population has converged sufficiently (exit condition)
-        if range < self.minintv then
+        if range <= minintv then
+            print("BREAK -- Range: " .. range .. " < " .. minintv)
             break
         end
 
         -- check if enough time has elapsed (exit condition)
-        if maxtime > os.time() - stime then
+        if maxtime < os.time() - stime then
             break
+        end
+
+        if iter % 10 == 0 then
+            print(iter, range, os.time() - stime, elite.fitness)
         end
 
         -- select the parents from the population
@@ -118,14 +145,16 @@ function Evolve:run(initial_population, termination_conditions)
             local p2 = Util.draw(parents)
 
             -- produce schildren from crossover
-            local offspring = self.crossover(p1, p2)
+            local offspring = self.crossover(p1.chromosome, p2.chromosome)
 
             -- mutate (or not) each child and add it to the children table
             for _, child in pairs(offspring) do
+                dump(child)
                 if math.random() > self.mutation.rate then
-                    table.insert(children, child)
+                    local new = child
+                    table.insert(children, new)
                 else
-                    local mutant = self.mutation.fn(child)
+                    local mutant = self.mutation.fn(child.chromosome)
                     table.insert(children, mutant)
                 end
 
@@ -141,6 +170,8 @@ function Evolve:run(initial_population, termination_conditions)
         -- set the next generation
         population = children
     end
+
+    print(iterations)
 
     return elite
 end
