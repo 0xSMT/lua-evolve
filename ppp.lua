@@ -14,9 +14,9 @@ ppp.fitness = function(problem_specs)
             return math.abs(pt1.x - pt2.x) + math.abs(pt1.y - pt2.y)
         end
 
-        for row = 1, chromosome.rows do
-            for col = 1, chromosome.cols do
-                local val = chromosome.data[(row - 1) * chromosome.cols + col]
+        for row = 1, problem_specs.rows do
+            for col = 1, problem_specs.cols do
+                local val = chromosome[(row - 1) * problem_specs.cols + col]
                 locations[val] = {x = col, y = row}
             end
         end
@@ -53,15 +53,14 @@ end
 
 ppp.chromosome = function(problem_specs)
     return function(permutation)
-        local unit = {chromosome = {}}
+        local unit = {chromosome = permutation}
 
-        unit.chromosome.data     = permutation
-        unit.chromosome.rows     = problem_specs.rows
-        unit.chromosome.cols     = problem_specs.cols
-        unit.chromosome.graph    = problem_specs.graph
+        -- unit.chromosome.rows     = problem_specs.rows
+        -- unit.chromosome.cols     = problem_specs.cols
+        -- unit.chromosome.graph    = problem_specs.graph
 
         -- ASSUMPTION: The grid is assumed to be full
-        assert(#unit.chromosome.data == unit.chromosome.rows * unit.chromosome.cols)
+        assert(#unit.chromosome == problem_specs.rows * problem_specs.cols)
 
         return unit
     end
@@ -92,13 +91,15 @@ end
 ppp.start = function(problem_specs, mutation, crossover, selection)
     -- local problem_specs = ppp.parse(jsonfile)
     
+    local chromo = ppp.chromosome(problem_specs)
+
     return {
-        mutation    = {rate = 0.20, fn = mutation(ppp.chromosome(problem_specs))},
-        crossover   = crossover(ppp.chromosome(problem_specs)),
-        selection   = selection(true),
+        mutation    = {fn = mutation.fn(chromo), rate = mutation.rate, min_rate = mutation.min_rate, max_rate = mutation.max_rate},
+        crossover   = crossover and crossover(chromo) or nil,
+        selection   = selection and selection(true) or nil,
         is_feasible = ppp.is_feasible,
         fitness     = ppp.fitness(problem_specs),
-        chromosome  = ppp.chromosome(problem_specs),
+        chromosome  = chromo,
         minimize    = true,
     }
 end

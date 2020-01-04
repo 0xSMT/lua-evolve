@@ -1,5 +1,6 @@
-local twobondswap = function(chromosome_init)
+local Util = require 'util'
 
+local scramble = function(chromosome_init)
     return function(chromosome)
         local len = #chromosome
 
@@ -12,6 +13,15 @@ local twobondswap = function(chromosome_init)
 
         pt1, pt2 = math.min(pt1, pt2), math.max(pt1, pt2)
 
+        -- pt1, pt2 = 3, 8
+
+        local slice = {}
+
+        for i = pt1, pt2 do
+            slice[i - pt1 + 1] = chromosome[i]
+        end
+
+        local mixed = Util.shuffle(slice)
         local data = {}
 
         for i = 1, pt1 - 1 do
@@ -19,7 +29,7 @@ local twobondswap = function(chromosome_init)
         end
 
         for i = pt1, pt2 do
-            data[i] = chromosome[pt1 + (pt2 - i)]
+            data[i] = mixed[i - pt1 + 1]
         end
 
         for i = pt2 + 1, len do
@@ -40,10 +50,10 @@ end
 
 -- old = c_init(old)
 
--- local tbe = twobondswap(c_init)
+-- local ins = scramble(c_init)
 
--- local mut = tbe(old)
+-- local mut = ins(old.data)
 
 -- print(table.unpack(mut.data))
 
-return twobondswap
+return scramble

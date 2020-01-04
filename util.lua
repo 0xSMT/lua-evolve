@@ -90,4 +90,12 @@ function Util.shuffle(vals)
     return mixed
 end
 
+-- math.randomseed(os.time())
+
+-- local arr = {1,2,3}
+
+-- for i = 1, 10 do
+--     print(table.unpack(Util.shuffle(arr)))
+-- end
+
 return Util

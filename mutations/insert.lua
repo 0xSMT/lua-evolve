@@ -1,7 +1,8 @@
-local pairwise = function(chromosome_init)
-
+local insertion = function(chromosome_init)
+    num_pts = 1
     return function(chromosome)
         local len = #chromosome
+        assert(len > 0)
 
         local pt1 = math.random(len)
         local pt2 = 0
@@ -10,16 +11,14 @@ local pairwise = function(chromosome_init)
             pt2 = math.random(len)
         until pt2 ~= pt1
 
-        assert( pt1 ~= pt2)
-
         local data = {}
 
         for i = 1, len do
             data[i] = chromosome[i]
         end
 
-        data[pt1] = chromosome[pt2]
-        data[pt2] = chromosome[pt1]
+        local val = table.remove(data, pt1)
+        table.insert(data, pt2, val)
 
         return chromosome_init(data)
     end
@@ -35,10 +34,10 @@ end
 
 -- old = c_init(old)
 
--- local pwise = pairwise(c_init)
+-- local ins = insertion(c_init)
 
--- local mut = pwise(old)
+-- local mut = ins(old.data)
 
 -- print(table.unpack(mut.data))
 
-return pairwise
+return insertion

@@ -1,8 +1,8 @@
 local order1 = function(chromosome_init)
 
     return function(p1, p2)
-        local len = #p1.data
-        assert(len == #p2.data)
+        local len = #p1
+        assert(len == #p2)
         assert(len > 2)
 
         local slice1 = math.random(len - 2) + 1
@@ -20,8 +20,8 @@ local order1 = function(chromosome_init)
         local used2 = {}
 
         for i = slice1, slice2 do
-            child1[i] = p1.data[i]
-            child2[i] = p2.data[i]
+            child1[i] = p1[i]
+            child2[i] = p2[i]
 
             used1[child1[i]] = true
             used2[child2[i]] = true
@@ -31,16 +31,16 @@ local order1 = function(chromosome_init)
         for i = 1, len do
             index = (slice2 + i) % (len) + 1
 
-            if not used1[p2.data[index]] then
-                child1[index1] = p2.data[index]
-                used1[p2.data[index]] = true
+            if not used1[p2[index]] then
+                child1[index1] = p2[index]
+                used1[p2[index]] = true
                 index1 = (index1 + 1) % (len + 1)
                 if index1 == 0 then index1 = 1 end
             end
 
-            if not used2[p1.data[index]] then
-                child2[index2] = p1.data[index]
-                used2[p1.data[index]] = true
+            if not used2[p1[index]] then
+                child2[index2] = p1[index]
+                used2[p1[index]] = true
                 index2 = (index2 + 1) % (len + 1)
                 if index2 == 0 then index2 = 1 end
             end
